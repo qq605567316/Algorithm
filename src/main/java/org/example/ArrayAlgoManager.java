@@ -39,6 +39,20 @@ public class ArrayAlgoManager {
         return flag >= 3 ? max3 : max1;
     }
 
+    //66. 加一
+    public int[] plusOne(int[] digits) {
+        int length = digits.length;
+        for (int i = length - 1; i >= 0; i--) {
+            if (digits[i] != 9) {
+                digits[i] += 1;
+                return digits;
+            }
+            digits[i] = 0;
+        }
+        int[] rs = new int[length + 1];
+        rs[0] = 1;
+        return rs;
+    }
     //771. 宝石与石头
     public int numJewelsInStones(String jewels, String stones) {
         int result = 0;

@@ -67,4 +67,10 @@ public class ArrayAlgoManagerTest {
         int[][] edge = {{0, 1, 100}, {1, 2, 100}, {0, 2, 500}};
         System.out.println(manager.findCheapestPrice(n, edge, src, dst, k));
     }
+
+    @Test
+    public void plusOne() {
+        int[] arr = {9};
+        System.out.println(manager.plusOne(arr));
+    }
 }
