@@ -4,6 +4,7 @@ import org.example.common.ListNode;
 import org.example.common.TreeNode;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class ArrayAlgoManager {
     //414. 第三大的数
@@ -55,6 +56,7 @@ public class ArrayAlgoManager {
         rs[0] = 1;
         return rs;
     }
+
     //771. 宝石与石头
     public int numJewelsInStones(String jewels, String stones) {
         int result = 0;
@@ -1019,6 +1021,58 @@ public class ArrayAlgoManager {
             }
         }
         return min1 + min2 > arr.length ? -1 : min1 + min2;
+    }
+
+    //349. 两个数组的交集
+    public int[] intersection(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 || nums2.length == 0) {
+            return null;
+        }
+        Set<Integer> set1 = new HashSet<>();
+        Set<Integer> set2 = new HashSet<>();
+        for (int i : nums1) {
+            set1.add(i);
+        }
+        for (int i : nums2) {
+            if (set1.contains(i)) {
+                set2.add(i);
+            }
+        }
+        int[] rs = new int[set2.size()];
+        int index = 0;
+        for (int i : set2) {
+            rs[index++] = i;
+        }
+        return rs;
+    }
+
+    //53. 最大子数组和
+    public static int maxSubArray(int[] nums) {
+        int max = nums[0];
+        int num = 0;
+        for (int n : nums) {
+            num += n;
+            max = Math.max(num, max);
+            if (num < 0) {
+                num = 0;
+            }
+        }
+        return max;
+    }
+
+    //55. 跳跃游戏
+    public static boolean canJump(int[] nums) {
+        int n = nums[0];
+        for (int i = 0; i < nums.length; i++) {
+            if (n < i) {
+                return false;
+            }
+            n = Math.max(n, i + nums[i]);
+            if (n > nums.length) {
+                break;
+            }
+        }
+        return true;
     }
 
     public static void main(String[] args) {

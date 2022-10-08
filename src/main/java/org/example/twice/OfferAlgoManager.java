@@ -5,4 +5,5 @@ package org.example.twice;
  * @date 2022/10/8
  */
 public class OfferAlgoManager {
+
 }
