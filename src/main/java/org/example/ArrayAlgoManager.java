@@ -2,6 +2,7 @@ package org.example;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.stream.IntStream;
 
 public class ArrayAlgoManager {
     //414. 第三大的数
@@ -81,6 +82,39 @@ public class ArrayAlgoManager {
         return true;
     }
 
+    //7. 整数反转
+    public int reverse(int x) {
+        boolean flag = false;
+        if (x < 0) {
+            flag = true;
+            x = -x;
+        }
+        StringBuilder s = new StringBuilder("0");
+        while (x != 0) {
+            s.append(x % 10);
+            x /= 10;
+        }
+        try {
+            x = Integer.parseInt(s.toString());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+        return flag ? -x : x;
+    }
+
+    //9. 回文数
+    public boolean isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        int n = x, m = 0;
+        while (x != 0) {
+            m = m * 10 + x % 10;
+            x /= 10;
+        }
+        return n == m;
+    }
+
     //14. 最长公共前缀
     public String longestCommonPrefix(String[] strs) {
         StringBuilder sb = new StringBuilder();
@@ -94,6 +128,166 @@ public class ArrayAlgoManager {
             }
         }
         return sb.toString();
+    }
+
+
+    //13. 罗马数字转整数
+    public int romanToInt(String s) {
+        Map<Character, Integer> mappingMap = new HashMap<>();
+        mappingMap.put('I', 1);
+        mappingMap.put('V', 5);
+        mappingMap.put('X', 10);
+        mappingMap.put('L', 50);
+        mappingMap.put('C', 100);
+        mappingMap.put('D', 500);
+        mappingMap.put('M', 1000);
+        int rs = 0;
+        char[] arr = s.toCharArray();
+        for (int i = 0; i < arr.length - 1; i++) {
+            if (mappingMap.get(arr[i]) < mappingMap.get(arr[i + 1])) {
+                rs -= mappingMap.get(arr[i]);
+            } else {
+                rs += mappingMap.get(arr[i]);
+            }
+        }
+        rs += mappingMap.get(arr[arr.length - 1]);
+        return rs;
+    }
+
+    //27. 移除元素
+    public int removeElement(int[] nums, int val) {
+        int start = 0, end = nums.length - 1;
+        while (start <= end) {
+            if (nums[end] == val) {
+                end--;
+                continue;
+            }
+            if (nums[start] == val) {
+                nums[start] = nums[end--];
+            }
+            start++;
+        }
+        return ++end;
+    }
+
+    //28. 实现 strStr()
+    public int strStr(String haystack, String needle) {
+        if (needle == null || needle.length() == 0) {
+            return 0;
+        }
+        char[] haystackChars = haystack.toCharArray();
+        char[] needleChars = needle.toCharArray();
+        int j = 0;
+        for (int i = 0; i < haystackChars.length; i++) {
+            if (haystackChars[i] != needleChars[j]) {
+                if (j != 0) {
+                    i = i - j;
+                    j = 0;
+                }
+                continue;
+            }
+            j++;
+            if (j == needleChars.length) {
+                return i - j + 1;
+            }
+        }
+        return -1;
+    }
+
+    //506. 相对名次
+    public String[] findRelativeRanks(int[] score) {
+        String[] rs = new String[score.length];
+        int max = 0;
+        for (int i : score) {
+            if (i > max) {
+                max = i;
+            }
+        }
+        int[] arr = new int[max + 1];
+        int i = 0;
+        for (; i < score.length; i++) {
+            int index = score[i];
+            if (i == 0) {
+                arr[index] = -1;
+            } else {
+                arr[index] = i;
+            }
+        }
+        i = max;
+        max = 1;
+        while (i >= 0) {
+            if (arr[i] != 0) {
+                int index = arr[i] == -1 ? 0 : arr[i];
+                if (max == 1) {
+                    rs[index] = "Gold Medal";
+                    max++;
+                } else if (max == 2) {
+                    rs[index] = "Silver Medal";
+                    max++;
+                } else if (max == 3) {
+                    rs[index] = "Bronze Medal";
+                    max++;
+                } else {
+                    rs[index] = max + "";
+                    max++;
+                }
+            }
+            i--;
+        }
+        return rs;
+    }
+
+    //783. 二叉搜索树节点最小距离
+    int last = Integer.MAX_VALUE, ans = Integer.MAX_VALUE;
+
+    public int minDiffInBST(TreeNode root) {
+        if (root != null) {
+            minDiffInBST(root.left);
+            ans = Math.min(ans, Math.abs(root.val - last));
+            System.out.println(ans);
+            last = root.val;
+            minDiffInBST(root.right);
+        }
+        return ans;
+    }
+
+    //1034. 边界着色
+    public int[][] colorBorder(int[][] grid, int row, int col, int color) {
+        int value = grid[row][col];
+        color(grid, row, col, value, color, 0);
+        return grid;
+    }
+
+    //v的值：  0起点 1up 2down 3left 4right
+    private boolean color(int[][] grid, int row, int col, int value, int color, int v) {
+        if (grid[row][col] != value) {
+            return false;
+        }
+        boolean f = true;
+        while (true) {
+            if (v != 1 && row > 0)
+                f = color(grid, row - 1, col, value, color, 2);
+            if (!f)
+                break;
+            if (v != 3 && col > 0)
+                f = color(grid, row, col - 1, value, color, 4);
+            if (!f)
+                break;
+            if (v != 2 && grid.length > 1 && row < grid.length - 1)
+                f = color(grid, row + 1, col, value, color, 1);
+            if (!f)
+                break;
+            if (v != 4 && grid[0].length > 1 && col < grid[0].length - 1)
+                f = color(grid, row, col + 1, value, color, 3);
+            break;
+        }
+        if (f && (row == 0 || col == 0 || row == grid.length - 1 || col == grid[0].length - 1)) {
+            f = false;
+        }
+        if (!f) {
+            grid[row][col] = color;
+        }
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -489,18 +683,389 @@ public class ArrayAlgoManager {
         return 0;
     }
 
-    public static void main(String[] args) {
-        LinkedHashMap<String,String> map = new LinkedHashMap<>();
-        int[] m = {2, 3, 1, 1, 4};
-        System.out.println(jump(m));
-        while (true) {
-            int res = JOptionPane.showConfirmDialog(null, "你是不是喜欢我", "❤❤❤❤", JOptionPane.YES_NO_OPTION);
-            if (res == JOptionPane.YES_OPTION) {
-                System.out.println("选择是后执行的代码");
-                return;
-            } else {
-                System.out.println("选择否后执行的代码");
+    //*************************************************mid***************************************************************
+
+    //6. Z 字形变换
+    public String convert(String s, int numRows) {
+        if (s.length() <= numRows || numRows == 1) {
+            return s;
+        }
+        char[] chars = s.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        int step = (numRows - 1) * 2;
+        for (int i = 0; i < numRows; i++) {
+            for (int j = i; j < s.length(); j += step) {
+                sb.append(chars[j]);
+                if (i != 0 && i != numRows - 1) {
+                    int index = step - (i * 2);
+                    if (index < s.length() - j) {
+                        sb.append(chars[j + index]);
+                    }
+                }
             }
         }
+        return sb.toString();
+    }
+
+    //206. 反转链表
+    public ListNode reverseList(ListNode head) {
+        ListNode p = head;
+        ListNode c = head.next;
+        while (c != null) {
+            ListNode n = c;
+            c = c.next;
+            n.next = p;
+            p = n;
+        }
+        return p;
+    }
+
+    //2024. 考试的最大困扰度
+    public int maxConsecutiveAnswers(String answerKey, int k) {
+        return Math.max(getCnt(answerKey, k, 'T'), getCnt(answerKey, k, 'F'));
+    }
+
+    private int getCnt(String answerKey, int k, char c) {
+        int value = 0;
+        for (int i = 0, j = 0, nums = 0; i < answerKey.length(); i++) {
+            if (answerKey.charAt(i) != c) {
+                nums++;
+            }
+            while (nums > k) {
+                if (answerKey.charAt(j++) != c) {
+                    nums--;
+                }
+            }
+            value = Math.max(value, i - j + 1);
+        }
+        return value;
+    }
+
+    //2055. 蜡烛之间的盘子
+    public static int[] platesBetweenCandles(String s, int[][] queries) {
+        int n = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '|') {
+                n++;
+            }
+        }
+        int[] index = new int[n];
+        int t = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == '|') {
+                index[t++] = i;
+            }
+        }
+        int[] result = new int[queries.length];
+        if (n <= 1) {
+            return result;
+        }
+        for (int i = 0; i < queries.length; i++) {
+            int l = binarySearch(index, queries[i][0], true);
+            int r = binarySearch(index, queries[i][1], false);
+            if (l >= r) {
+                result[i] = 0;
+                continue;
+            }
+            result[i] = index[r] - index[l] - r + l;
+        }
+        return result;
+    }
+
+    private static int binarySearch(int[] nums, int target, boolean isLeft) {
+        int low = 0, high = nums.length - 1;
+        if (nums[0] >= target) {
+            return 0;
+        }
+        if (nums[high] <= target) {
+            return high;
+        }
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        if (isLeft) {
+            if (nums[low] > target) {
+                return low;
+            }
+            return low + 1;
+        }
+        if (nums[low] < target) {
+            return low;
+        }
+        return low - 1;
+    }
+
+    //386. 字典序排数
+    public List<Integer> lexicalOrder(int n) {
+        List<Integer> resultList = new ArrayList<>();
+        for (int i = 0, j = 1; i < n; i++) {
+            resultList.add(j);
+            if (j * 10 <= n) {
+                j *= 10;
+            } else {
+                while (j % 10 == 9 || j + 1 > n) {
+                    j /= 10;
+                }
+                j++;
+            }
+        }
+        return resultList;
+    }
+
+
+    //821. 字符的最短距离
+    public int[] shortestToChar(String s, char c) {
+        int[] arr = new int[s.length()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = arr.length;
+        }
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == c) {
+                int t = 0;
+                for (int j = i; j >= 0 && arr[j] > t; j--) {
+                    arr[j] = t++;
+                }
+                t = 1;
+                for (int j = i + 1; j < s.length() && s.charAt(j) != c; j++) {
+                    arr[j] = t++;
+                }
+            }
+        }
+        return arr;
+    }
+
+    //面试题 08.09. 括号
+    public List<String> generateParenthesis(int n) {
+        List<String> result = new ArrayList<>();
+        dfsGenerateParenthesis(n, result, 0, 0, "");
+        return result;
+    }
+
+    //868. 二进制间距
+    public int binaryGap(int n) {
+        int t = 1, max = 0, temp = -1;
+        while (n != 0) {
+            if ((t & n) != 1) {
+                n = n >> 1;
+            } else {
+                break;
+            }
+        }
+        while (t < n) {
+            temp++;
+            if ((t & n) == t) {
+                if (temp > max) {
+                    max = temp;
+                }
+                temp = 0;
+            }
+            t = t << 1;
+        }
+        return max;
+    }
+
+    private void dfsGenerateParenthesis(int n, List<String> temp, int leftNum, int rightNum, String str) {
+        //出口一：判断不满足条件的情况，主要从左右括号数量上判断，三种情况。
+        if (leftNum < rightNum || leftNum > n) {
+            return;
+        }
+        //出口二：满足条件，即左右括号数量相等且已经达到最大值。
+        if (leftNum == rightNum && rightNum == n) {
+            temp.add(str);
+        }
+        //否则
+        else {
+            //一定要先加左括号，再加右括号；
+            //加完左括号后，左括号数量加1,回溯；
+            dfsGenerateParenthesis(n, temp, leftNum + 1, rightNum, str + "(");
+
+            //再加右括号，然后dfs，再回溯。
+            dfsGenerateParenthesis(n, temp, leftNum, rightNum + 1, str + ")");
+        }
+    }
+
+    //824. 山羊拉丁文
+    public String toGoatLatin(String sentence) {
+        String[] arr = sentence.split(" ");
+        Set<Character> set = new HashSet<>();
+        set.add('a');
+        set.add('e');
+        set.add('i');
+        set.add('o');
+        set.add('u');
+        set.add('A');
+        set.add('E');
+        set.add('I');
+        set.add('O');
+        set.add('U');
+        StringBuilder builder = new StringBuilder();
+        StringBuilder a = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            a.append("a");
+            if (set.contains(arr[i].charAt(0))) {
+                builder.append(arr[i]).append("ma").append(a.toString()).append(" ");
+            } else {
+                char c = arr[i].charAt(0);
+                builder.append(arr[i], 1, arr[i].length()).append(c).append("ma").append(a.toString()).append(" ");
+            }
+        }
+        return builder.deleteCharAt(builder.length() - 1).toString();
+    }
+
+    //713. 乘积小于 K 的子数组
+    public int numSubarrayProductLessThanK(int[] nums, int k) {
+        int rs = 0;
+        for (int i = 0; i < nums.length; i++) {
+            int t = 0;
+            int n = 1;
+            for (int j = i; j < nums.length; j++) {
+                n *= nums[j];
+                if (n < k) {
+                    t++;
+                } else {
+                    break;
+                }
+            }
+            rs += t;
+        }
+        return rs;
+    }
+
+    //942. 增减字符串匹配
+    public int[] diStringMatch(String s) {
+        int l = 0, r = s.length(), rsLength = r + 1;
+        int[] rs = new int[rsLength];
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == 'I') {
+                rs[i] = l++;
+            } else {
+                rs[i] = r--;
+            }
+        }
+        rs[rsLength - 1] = l;
+        return rs;
+    }
+
+    //462. 最少移动次数使数组元素相等 II
+    public int minMoves2(int[] nums) {
+        int rs = 0;
+        Arrays.sort(nums);
+        int n = nums[nums.length / 2];
+        for (int i = 0; i < nums.length; i++) {
+            rs += Math.abs(nums[i] - n);
+        }
+        return rs;
+    }
+
+    //1828. 统计一个圆中点的数目
+    public int[] countPoints(int[][] points, int[][] queries) {
+        int[] rs = new int[queries.length];
+        for (int i = 0; i < queries.length; i++) {
+            int n = 0;
+            for (int[] point : points) {
+                if ((Math.sqrt(Math.pow(point[0] - queries[i][0], 2) + Math.pow(point[1] - queries[i][1], 2)) <= queries[i][2])) {
+                    n++;
+                }
+            }
+            rs[i] = n;
+        }
+        return rs;
+    }
+
+    //1477. 找两个和为目标值且不重叠的子数组
+    public int minSumOfLengths(int[] arr, int target) {
+        int l = 0, r = 0, n = 0, min1 = arr.length, min2 = arr.length;
+        while (l < arr.length) {
+            if (n > target) {
+                if (l + 1 == r) {
+                    l++;
+                    n = 0;
+                    continue;
+                }
+                n -= arr[l++];
+            } else if (n == target) {
+                int newMin = r - l;
+                int temp = 0;
+                if (newMin < min1) {
+                    temp = min1;
+                    min1 = newMin;
+                    newMin = temp;
+                }
+                if (newMin < min2) {
+                    min2 = newMin;
+                }
+                n -= arr[l++];
+            } else {
+                if (r == arr.length) {
+                    break;
+                }
+                n += arr[r++];
+            }
+        }
+        if (n == target) {
+            int newMin = r - l;
+            if (newMin < min1) {
+                min1 = newMin;
+            } else if (newMin < min2) {
+                min2 = newMin;
+            }
+        }
+        return min1 + min2 > arr.length ? -1 : min1 + min2;
+    }
+
+    public static void main(String[] args) {
+//        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+//        int[] m = {2, 3, 1, 1, 4};
+//        System.out.println(jump(m));
+//        while (true) {
+//            int res = JOptionPane.showConfirmDialog(null, "你是不是喜欢我", "❤❤❤❤", JOptionPane.YES_NO_OPTION);
+//            if (res == JOptionPane.YES_OPTION) {
+//                System.out.println("选择是后执行的代码");
+//                return;
+//            } else {
+//                System.out.println("选择否后执行的代码");
+//            }
+//        }
+//        int a = 10;
+//        int b = 10;
+//        int[] arr = new int[5];
+//        arr[0] = 10;
+//        a = a ^ b;
+//        b = a ^ b;
+//        a = a ^ b;
+//        System.out.println(a);
+//        System.out.println(b);
+
+        //""
+        //[[2,33],[2,32],[3,31],[0,33],[1,24],[3,20],[7,11],[5,32],[2,31],[5,31],[0,31],[3,28],[4,33],[6,29],[2,30],[2,28],[1,30],[1,33],[4,32],[5,30],[4,23],[0,30],[3,10],[5,28],[0,28],[4,28],[3,33],[0,27]]
+        String s = "***";
+        int[][] arr = new int[1][];
+        arr[0] = new int[]{2, 2};
+//        arr[1] = new int[]{2, 32};
+//        arr[2] = new int[]{3, 31};
+//        arr[3] = new int[]{0, 33};
+//        arr[4] = new int[]{1, 24};
+//        arr[5] = new int[]{3, 20};
+//        arr[6] = new int[]{7, 11};
+//        arr[7] = new int[]{5, 32};
+//        arr[8] = new int[]{2, 31};
+//        arr[9] = new int[]{5, 31};
+//        arr[10] = new int[]{0, 31};
+//        arr[11] = new int[]{3, 28};
+//        arr[12] = new int[]{4, 33};
+//        arr[13] = new int[]{6, 29};
+//        arr[14] = new int[]{2, 30};
+//        arr[15] = new int[]{2, 28};
+//        arr[16] = new int[]{1, 30};
+//        arr[17] = new int[]{1, 33};
+        int[] rs = platesBetweenCandles(s, arr);
+        System.out.println(rs);
     }
 }
