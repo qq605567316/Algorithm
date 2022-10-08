@@ -1,11 +1,11 @@
-package org.example;
+package org.example.common;
 
 public class ListNode {
-    int val;
-    
-    ListNode next;
+    public int val;
 
-    ListNode(int x) {
+    public ListNode next;
+
+    public ListNode(int x) {
         val = x;
     }
 

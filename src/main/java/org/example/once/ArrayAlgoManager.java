@@ -1,8 +1,9 @@
-package org.example;
+package org.example.once;
 
-import javax.swing.*;
+import org.example.common.ListNode;
+import org.example.common.TreeNode;
+
 import java.util.*;
-import java.util.stream.IntStream;
 
 public class ArrayAlgoManager {
     //414. 第三大的数

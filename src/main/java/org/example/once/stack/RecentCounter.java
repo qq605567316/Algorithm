@@ -1,4 +1,4 @@
-package org.example.stack;
+package org.example.once.stack;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

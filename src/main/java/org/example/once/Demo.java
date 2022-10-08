@@ -1,4 +1,4 @@
-package org.example;
+package org.example.once;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class Demo {
             String s = sort[i];
             if (s != null) {
                 t++;
-                sb.append(s + " ");
+                sb.append(s).append(" ");
             } else {
                 if (t >= 5) {
                     lists.add(sb.toString().substring(0, sb.length() - 1));

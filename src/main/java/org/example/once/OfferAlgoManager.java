@@ -1,4 +1,7 @@
-package org.example;
+package org.example.once;
+
+import org.example.common.ListNode;
+import org.example.common.TreeNode;
 
 import java.util.*;
 
